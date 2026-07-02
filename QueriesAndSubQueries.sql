@@ -92,5 +92,25 @@ order by co.crs_std_grade
 select c.* from Course c
 left join Prerequisites p 
 on p.crs_code=c.code
-select * from Course
-select * from prerequisites
+--20
+select s.fullname , c.title from student s
+inner join Enrollment e
+on s.std_num=e.std_num
+inner join Course_offerings co
+on co.offer_id=e.offer_id
+inner join Course c
+on c.code=co.crs_code
+--21
+select top(1) fullname from Student order by len(fullName) desc
+--22
+select i.* from Instructor i
+left join Office o
+on o.inst_id=i.inst_id
+--23
+select * from
+(
+select *,dense_RANK() over (order by crs_std_grade ) as dr from Enrollment 
+) as newTable 
+where dr=2
+--24
+update Enrollment set crs_std_grade=83 where degree=3and std_num=6
