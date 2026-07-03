@@ -52,10 +52,14 @@ insert into Instructor(inst_id,name,depName) values
 (5,'smay','dep_3')
 go
 insert into Prerequisites values
+(1,4),
+(4,3),
 (1,3),
+(1,6),
+(5,6),
+(8,2),
 (2,7),
-(4,6),
-(5,6)
+(8,7)
 go
 insert into Enrollment (offer_id,std_num,crs_std_grade,degree) values
 (1,1,61,1),
