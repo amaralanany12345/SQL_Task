@@ -1,10 +1,10 @@
 go
 select * from Student
 go
-select distinct s.fullName,e.crs_std_grade from Student s
+select distinct s.fullName,e.grade from Student s
 inner join Enrollment e
 on s.std_num=e.std_num
-order by e.crs_std_grade
+order by e.grade
 go
 select * from Course where credit_hours>20
 go
@@ -13,28 +13,28 @@ go
 select * from (
 select *,dense_rank() over (order by dep_name) as rn from Course
 ) as newTable
-where rn>2
+where rn=2
 go
-select top(2)* from Enrollment order by crs_std_grade desc
+select top(2)* from Enrollment order by grade desc
 go
 select * from prerequisites p
 left join Course c
 on p.crs_code=c.code
 go
-select *,lag(std_num) over(order by crs_std_grade) as lagStd,
-lead(std_num) over (order by crs_std_grade) from Enrollment
+select *,lag(std_num) over(order by grade) as lagStd,
+lead(std_num) over (order by grade) as leadStd from Enrollment
 go
 select * from Student where fullName like '%a' or fullName like 'a%'
 go
 select * from Course_offerings where crs_time>GETDATE()
 go
-select degree,count(title) as cnt from Enrollment e
+select e.degree,count(c.title) as cnt from Enrollment e
 inner join Course_offerings co
 on e.offer_id=co.offer_id
 inner join Course c
 on co.crs_code=c.code
-group by degree
-having count(title)>3
+group by e.degree
+having count(c.title)>3
 go
 select count(inst_id) as cnt,term_name from Course_offerings group by term_name
 go
@@ -52,18 +52,18 @@ begin
 	return @name
 end
 
-select  dbo.getCourseNameById(2)
+select  dbo.getCourseNameById(5)
 go
-create proc insertInEnrollMent @grade int, @std_num int ,@code int,@inst_id int
+alter proc insertInEnrollMent @offer_id int, @std_num int ,@grade int,@degree int
 as
-	insert into Enrollment values
-	(@grade,@std_num,@code,@inst_id)
+	insert into Enrollment(offer_id,std_num,grade,degree) values
+	(@offer_id,@std_num,@grade,@degree)
 
-execute insertInEnrollMent 3,8,3,5
+execute insertInEnrollMent 3,8,93,5
 select * from Enrollment 
 go
 declare c1 cursor
-for select e.std_num,co.crs_code,e.crs_std_grade from Course_offerings co
+for select e.std_num,co.crs_code,e.grade from Course_offerings co
 inner join Enrollment e
 on e.offer_id=co.offer_id
 declare @std_num int,@crs_code int,@grade int
@@ -88,14 +88,10 @@ deallocate c1
 go
 select count(inst_id),term_name from course_offerings group by term_name
 go
-select top(1)s.fullName,e.crs_std_grade from Student s
+select top(1)s.fullName,e.grade from Student s
 inner join Enrollment e
 on s.std_num=e.std_num
-order by crs_std_grade desc
-go
-select c.* from Course c
-left join Prerequisites p 
-on p.crs_code=c.code
+order by grade desc
 go
 select s.fullname , c.title from student s
 inner join Enrollment e
@@ -113,11 +109,9 @@ on o.inst_id=i.inst_id
 go
 select * from
 (
-select *,dense_RANK() over (order by crs_std_grade ) as dr from Enrollment 
+select *,dense_RANK() over (order by grade ) as dr from Enrollment 
 ) as newTable 
 where dr=2
-go
-update Enrollment set crs_std_grade=83 where degree=3and std_num=6
 go
 create function getCoursePreRequites(@code int)
 returns table
@@ -130,10 +124,10 @@ as return
 		where c.code=@code
 select * from getCoursePreRequites(6)
 go
-select t.term_name,count(co.crs_code) from Course_offerings co
+select t.term_date,count(co.crs_code) as cntOfCrs from Course_offerings co
 inner join Term t
 on t.term_name=co.term_name
-group by t.term_name
+group by t.term_date
 go
 alter function getInstructorNameById(@id int)
 returns varchar(20)
@@ -145,7 +139,11 @@ returns varchar(20)
 	end
 go
 select  dbo.getInstructorNameById(2)
-select * from Instructor
+--outer
+select * from course c
+left outer join Prerequisites p
+on c.code=p.crs_code
+
 
 
 

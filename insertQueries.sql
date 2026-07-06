@@ -61,7 +61,7 @@ insert into Prerequisites values
 (2,7),
 (8,7)
 go
-insert into Enrollment (offer_id,std_num,crs_std_grade,degree) values
+insert into Enrollment (offer_id,std_num,grade,degree) values
 (1,1,61,1),
 (3,2,72,6),
 (5,5,61,4),
@@ -73,11 +73,11 @@ insert into Enrollment (offer_id,std_num,crs_std_grade,degree) values
 (4,8,51,6),
 (1,8,64,1),
 (5,6,32,3),
-(2,3,56,4),
 (2,5,43,5),
 (4,4,47,4),
 (6,1,78,2),
 (3,6,94,1)
+
 go
 insert into course_offerings(offer_id,room_num,crs_code,inst_id,crs_time,term_name) values
 (1,1,1,1,'2026-01-16','Jan'),

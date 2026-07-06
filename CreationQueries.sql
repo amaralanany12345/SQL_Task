@@ -19,10 +19,12 @@ create table Department
 	phone_number varchar(20),
 )
 go
-create table Term
+
+create table Term 
 (
 	term_id uniqueidentifier default newid() primary key,
 	term_name varchar(20) unique,
+	term_date date
 )
 go
 create table Program
@@ -76,13 +78,14 @@ create table Enrollment
 	enroll_id uniqueidentifier default newid() primary key,
 	offer_id int,
 	std_num int,
-	crs_std_grade int,
+	grade int,
 	degree int,
 	constraint enroll_c1 foreign key(offer_id) references Course_offerings(offer_id),
 	constraint enroll_c2 foreign key(std_num) references Student(std_num),
+	constraint enroll_c3 unique(std_num,offer_id)
 )
 go
-create table Course_offerings
+create table Course_offerings 
 (
 	crs_offer_id uniqueidentifier default newid() primary key,
 	offer_id int unique,
